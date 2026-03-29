@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HUMIX — Admin Login</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+</head>
+<body class="login-page">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="brand-icon">🔐</div>
+      <h1>Admin</h1>
+      <p>HUMIX System Administrator</p>
+    </div>
+    <div class="login-card">
+      <h2>Admin Login</h2>
+      {% if error %}
+      <div class="err-msg" style="display:block;margin-bottom:16px">{{ error }}</div>
+      {% endif %}
+      <form method="POST" action="/admin/login">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="username" placeholder="admin" required autofocus>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Login as Admin</button>
+      </form>
+      <div style="text-align:center;margin-top:16px">
+        <a href="/" style="color:#64748b;font-size:.88rem">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

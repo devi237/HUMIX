@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HUMIX — Admin Events</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+</head>
+<body class="dash-page">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-icon">📡</span>
+      <span class="topbar-title">HUMIX Admin</span>
+    </div>
+    <div class="topbar-right">
+      <span class="role-pill role-admin">ADMIN</span>
+      <a href="/admin/logout" class="btn btn-logout">Logout</a>
+    </div>
+  </header>
+
+  <div style="max-width:1200px;margin:0 auto;padding:28px 20px">
+    <div style="margin-bottom:24px">
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--text)">
+        📋 Registered Events
+      </h2>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:4px">
+        Select an event to begin monitoring
+      </p>
+    </div>
+
+    {% if events %}
+    <div class="events-grid">
+      {% for ev in events %}
+      <div class="event-card">
+        <div class="event-card-top">
+          <div class="event-name">{{ ev.event_name }}</div>
+          <span class="ev-status ev-{{ ev.status }}">{{ ev.status|upper }}</span>
+        </div>
+        <div class="event-details">
+          <div class="ev-row"><span>📅</span><span>{{ ev.date }}</span></div>
+          <div class="ev-row"><span>🕐</span><span>{{ ev.start_time }} – {{ ev.end_time }}</span></div>
+          <div class="ev-row"><span>📍</span><span>{{ ev.venue }}</span></div>
+          <div class="ev-row"><span>👤</span><span>{{ ev.organizer_name }}</span></div>
+          <div class="ev-row"><span>👥</span><span>Est. {{ ev.estimated_crowd }} people</span></div>
+        </div>
+        <a href="/admin/select/{{ ev.id }}" class="btn btn-primary btn-full" style="margin-top:16px">
+          🎥 Monitor This Event
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-events">
+      <div style="font-size:4rem;margin-bottom:16px">📭</div>
+      <p>No events registered yet</p>
+      <small>Events will appear here once organizers register</small>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HUMIX — Event Login</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+</head>
+<body class="login-page">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="brand-icon">📡</div>
+      <h1>HUMIX</h1>
+      <p>Event Organizer Login</p>
+    </div>
+    <div class="login-card">
+      <h2>Sign In</h2>
+      {% if registered %}
+      <div style="background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);
+           padding:12px;border-radius:8px;margin-bottom:16px;text-align:center;font-weight:700">
+        ✅ Event registered successfully! Please login.
+      </div>
+      {% endif %}
+      {% if error %}
+      <div class="err-msg" style="display:block;margin-bottom:16px">{{ error }}</div>
+      {% endif %}
+      <form method="POST" action="/login">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="your@email.com" required autofocus>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Your password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+      <div style="text-align:center;margin-top:20px;font-size:.88rem;color:#64748b">
+        New event? <a href="/register" style="color:#22c55e;font-weight:700">Register here</a>
+        &nbsp;|&nbsp;
+        <a href="/" style="color:#64748b">← Back</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

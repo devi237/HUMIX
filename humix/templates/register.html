@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HUMIX — Register Event</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+</head>
+<body class="login-page">
+  <div class="login-wrap" style="max-width:560px">
+    <div class="login-brand">
+      <div class="brand-icon">📡</div>
+      <h1>HUMIX</h1>
+      <p>Register Your Event</p>
+    </div>
+    <div class="login-card">
+      <h2>Event Registration</h2>
+      {% if error %}
+      <div class="err-msg" style="display:block;margin-bottom:16px">{{ error }}</div>
+      {% endif %}
+      <form method="POST" action="/register">
+        <div class="form-row">
+          <div class="field">
+            <label>Event Name *</label>
+            <input type="text" name="event_name" placeholder="e.g. Tech Fest 2025" required>
+          </div>
+          <div class="field">
+            <label>Venue / Location *</label>
+            <input type="text" name="venue" placeholder="e.g. Main Hall, City Stadium" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Event Date *</label>
+            <input type="date" name="date" required>
+          </div>
+          <div class="field">
+            <label>Estimated Crowd *</label>
+            <input type="number" name="estimated_crowd" placeholder="e.g. 500" min="1" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Start Time *</label>
+            <input type="time" name="start_time" required>
+          </div>
+          <div class="field">
+            <label>End Time *</label>
+            <input type="time" name="end_time" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Organizer Name *</label>
+            <input type="text" name="organizer_name" placeholder="Your full name" required>
+          </div>
+          <div class="field">
+            <label>Email *</label>
+            <input type="email" name="email" placeholder="you@email.com" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Password *</label>
+          <input type="password" name="password" placeholder="Create a password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px">
+          ✅ Register Event
+        </button>
+      </form>
+      <div style="text-align:center;margin-top:20px;font-size:.88rem;color:#64748b">
+        Already registered? <a href="/login" style="color:#22c55e;font-weight:700">Login here</a>
+        &nbsp;|&nbsp;
+        <a href="/" style="color:#64748b">← Back</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

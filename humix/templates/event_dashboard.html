@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HUMIX — {{ event.event_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <audio id="alertSound" loop>
+    <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+  </audio>
+</head>
+<body class="dash-page">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-icon">📡</span>
+      <span class="topbar-title">HUMIX</span>
+      <span class="event-badge">{{ event.event_name }}</span>
+    </div>
+    <div class="topbar-right">
+      <button id="themeToggle" class="btn btn-theme">🌙</button>
+      <span class="role-pill role-event">EVENT</span>
+      <a href="/api/report" class="btn btn-report" target="_blank">📥 Report</a>
+      <a href="/logout" class="btn btn-logout">Logout</a>
+    </div>
+  </header>
+
+  <div id="alertBanner" class="alert-banner" style="display:none">
+    🚨 &nbsp; CROWD LIMIT EXCEEDED — Take action immediately!
+    <button id="muteBtn" onclick="toggleMute()" class="mute-btn">🔊 Mute</button>
+  </div>
+
+  <div class="dash-layout">
+    <aside class="left-panel">
+
+      <!-- Event Info -->
+      <div class="card">
+        <div class="card-title">📋 Event Details</div>
+        <div class="stat-rows">
+          <div class="stat-row"><span>Event</span>      <span>{{ event.event_name }}</span></div>
+          <div class="stat-row"><span>Date</span>       <span>{{ event.date }}</span></div>
+          <div class="stat-row"><span>Time</span>       <span>{{ event.start_time }} – {{ event.end_time }}</span></div>
+          <div class="stat-row"><span>Venue</span>      <span>{{ event.venue }}</span></div>
+          <div class="stat-row"><span>Est. Crowd</span> <span>{{ event.estimated_crowd }}</span></div>
+        </div>
+      </div>
+
+      <!-- Live Stats -->
+      <div class="card">
+        <div class="card-title">📊 Live Status</div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-val" id="countVal">0</div>
+            <div class="stat-lbl">Detected</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="threshVal">—</div>
+            <div class="stat-lbl">Threshold</div>
+          </div>
+          <div class="stat-box stat-wide">
+            <div class="stat-val stat-time" id="timeVal">--:--:--</div>
+            <div class="stat-lbl">Last Update</div>
+          </div>
+        </div>
+        <div class="flow-box">
+          <span class="flow-label">Crowd Flow</span>
+          <span class="flow-val" id="flowVal">—</span>
+        </div>
+      </div>
+
+      <!-- Session Stats -->
+      <div class="card" id="sessionCard" style="display:none">
+        <div class="card-title">📈 Session Statistics</div>
+        <div class="stat-rows">
+          <div class="stat-row"><span>Started</span>      <span id="sesStart">—</span></div>
+          <div class="stat-row"><span>Duration</span>     <span id="sesDur">0s</span></div>
+          <div class="stat-row"><span>Snapshots</span>    <span id="sesLogs">0</span></div>
+          <div class="stat-row"><span>Alert Events</span> <span id="sesAlerts">0</span></div>
+          <div class="stat-row"><span>Peak Count</span>   <span id="sesPeak">0</span></div>
+        </div>
+      </div>
+
+    </aside>
+
+    <main class="right-panel">
+
+      <!-- Live Video -->
+      <div class="card card-feed">
+        <div class="card-title">🎥 Live Video Feed
+          <span class="capture-note" id="liveTag">Waiting for camera...</span>
+        </div>
+        <div class="feed-box">
+          <img id="liveStream" src="" style="display:none;width:100%">
+          <div id="feedPh" class="feed-placeholder">
+            <div class="ph-icon">🎥</div>
+            <p>Camera not active</p>
+            <small>Waiting for admin to start camera</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graph -->
+      <div class="card card-graph">
+        <div class="card-title">📉 Crowd Count Over Time
+          <span class="capture-note">Live</span>
+        </div>
+        <div class="graph-container">
+          <canvas id="crowdChart"></canvas>
+          <div class="graph-placeholder" id="graphPh">
+            <p>Graph appears when camera starts</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>const USER_ROLE="event";</script>
+  <script src="{{ url_for('static',filename='js/event_dashboard.js') }}"></script>
+</body>
+</html>

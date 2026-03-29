@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HUMIX — Admin Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dash-page">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-icon">📡</span>
+      <span class="topbar-title">HUMIX</span>
+      <span class="event-badge">{{ event.event_name }}</span>
+    </div>
+    <div class="topbar-right">
+      <button id="themeToggle" class="btn btn-theme">🌙</button>
+      <a href="/api/report" class="btn btn-report" target="_blank">📥 Report</a>
+      <a href="/admin/events" class="btn btn-outline">← Events</a>
+      <a href="/admin/logout" class="btn btn-logout">Logout</a>
+    </div>
+  </header>
+
+  <div id="alertBanner" class="alert-banner" style="display:none">
+    🚨 &nbsp; CROWD LIMIT EXCEEDED — Take action immediately!
+  </div>
+
+  <div class="dash-layout">
+    <aside class="left-panel">
+
+      <!-- Camera Controls -->
+      <div class="card">
+        <div class="card-title">📷 Camera Controls</div>
+        <div class="field">
+          <label>Camera Source</label>
+          <select id="cameraSource">
+            <option value="webcam">💻 Laptop Webcam</option>
+            <option value="esp32">📡 ESP32-CAM</option>
+          </select>
+        </div>
+        <div class="field" id="esp32Field" style="display:none">
+          <label>ESP32 URL</label>
+          <input type="text" id="esp32Url" placeholder="http://192.168.x.x/capture">
+        </div>
+        <div class="cam-btns">
+          <button id="startBtn" class="btn btn-green">▶ Start</button>
+          <button id="stopBtn"  class="btn btn-red" disabled>⏹ Stop</button>
+        </div>
+        <div class="cam-status-row">
+          <span class="status-label">Status</span>
+          <span id="camStatus" class="status-pill pill-offline">Offline</span>
+          <span id="srcTag" class="source-tag" style="display:none"></span>
+        </div>
+      </div>
+
+      <!-- Arduino -->
+      <div class="card">
+        <div class="card-title">💡 Arduino LED Alert</div>
+        <div class="field">
+          <label>COM Port</label>
+          <input type="text" id="arduinoPort" value="COM3" placeholder="e.g. COM3">
+        </div>
+        <button id="arduinoBtn" class="btn btn-primary btn-full">Connect Arduino</button>
+        <div id="arduinoStatus" class="led-status-row" style="margin-top:10px">
+          <span class="led green-led" id="ledG" title="Normal">●</span>
+          <span class="led yellow-led" id="ledY" title="Warning 75%">●</span>
+          <span class="led red-led"   id="ledR" title="Alert">●</span>
+          <span style="font-size:.75rem;color:var(--muted);margin-left:6px">LED Status</span>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="card">
+        <div class="card-title">⚙️ Settings</div>
+        <div class="field">
+          <label>Crowd Threshold</label>
+          <input type="number" id="thresholdInput"
+                 value="{{ event.estimated_crowd }}" min="1" max="5000">
+        </div>
+        <div class="field">
+          <label>Confidence (<span id="confLabel">0.50</span>)</label>
+          <input type="range" id="confInput" min="10" max="90" value="50" step="5">
+        </div>
+        <button id="saveBtn" class="btn btn-primary btn-full">Save Settings</button>
+      </div>
+
+      <!-- Live Stats -->
+      <div class="card">
+        <div class="card-title">📊 Live Status</div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-val" id="countVal">0</div>
+            <div class="stat-lbl">Detected</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="threshVal">—</div>
+            <div class="stat-lbl">Threshold</div>
+          </div>
+          <div class="stat-box stat-wide">
+            <div class="stat-val stat-time" id="timeVal">--:--:--</div>
+            <div class="stat-lbl">Last Update</div>
+          </div>
+        </div>
+        <div class="flow-box">
+          <span class="flow-label">Crowd Flow</span>
+          <span class="flow-val" id="flowVal">—</span>
+        </div>
+      </div>
+
+      <!-- Session Stats -->
+      <div class="card" id="sessionCard" style="display:none">
+        <div class="card-title">📈 Session Statistics</div>
+        <div class="stat-rows">
+          <div class="stat-row"><span>Started</span>      <span id="sesStart">—</span></div>
+          <div class="stat-row"><span>Duration</span>     <span id="sesDur">0s</span></div>
+          <div class="stat-row"><span>Snapshots</span>    <span id="sesLogs">0</span></div>
+          <div class="stat-row"><span>Alert Events</span> <span id="sesAlerts">0</span></div>
+          <div class="stat-row"><span>Peak Count</span>   <span id="sesPeak">0</span></div>
+        </div>
+      </div>
+
+    </aside>
+
+    <main class="right-panel">
+
+      <!-- Captured Image -->
+      <div class="card card-feed">
+        <div class="card-title">🖼️ Captured Image
+          <span class="capture-note">Preprocessed · Every 2 seconds</span>
+        </div>
+        <div class="feed-box">
+          <img id="feedImg" src="" style="display:none">
+          <div id="feedPh" class="feed-placeholder">
+            <div class="ph-icon">📷</div>
+            <p>Camera not active</p>
+            <small>Select source and press Start</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graph -->
+      <div class="card card-graph">
+        <div class="card-title">📉 Crowd Count Over Time
+          <span class="capture-note">Live</span>
+        </div>
+        <div class="graph-container">
+          <canvas id="crowdChart"></canvas>
+          <div class="graph-placeholder" id="graphPh">
+            <p>Graph appears when camera starts</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>const USER_ROLE="admin";</script>
+  <script src="{{ url_for('static',filename='js/admin_dashboard.js') }}"></script>
+</body>
+</html>
