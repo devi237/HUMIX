@@ -193,4 +193,4 @@ All software components, algorithms, and documentation related to HUMIX are the 
 
 ---
 
-<p align="center">Made with ❤️ by Group 15 | VJCET</p>
+<p align="center">Made by Group 15 | VJCET</p>
